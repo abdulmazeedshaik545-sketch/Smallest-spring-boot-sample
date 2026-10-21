@@ -33,7 +33,7 @@ pipeline:
             uses: buildAndPushToDocker
             with:
               connector: account.Docketconnector
-              repo: abdulmazeedshaik545-sketch/Smallest-spring-app
+              repo: abdulmazeedshaik545-sketch/smallest-spring-app
               tags:
                 - SmallestSpringApp
               caching: true
