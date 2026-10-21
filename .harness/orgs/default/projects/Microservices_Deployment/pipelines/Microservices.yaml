@@ -27,3 +27,13 @@ pipeline:
               mvn -f SmallestSpringApp/pom.xml test
             intelligence:
               disabled: true
+        - name: Dockethub
+          id: Dockethub
+          build:
+            uses: buildAndPushToDocker
+            with:
+              connector: account.Docketconnector
+              repo: abdulmazeedshaik545-sketch/smallest-spring-app
+              tags:
+                - SmallestSpringApp
+              caching: true
