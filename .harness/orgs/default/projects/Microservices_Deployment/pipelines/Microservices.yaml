@@ -27,7 +27,21 @@ pipeline:
               mvn -f SmallestSpringApp/pom.xml test
             intelligence:
               disabled: true
-        
+        - id: checkDockerfile
+          name: Check Dockerfile and Build Output
+          run:
+            shell: bash
+            script: |-
+              echo "Current directory:"
+              pwd
+              echo "Repository root:"
+              ls -la
+              echo "Application directory:"
+              ls -la SmallestSpringApp
+              echo "Dockerfile check:"
+              test -f SmallestSpringApp/Dockerfile && echo "Dockerfile FOUND" || echo "Dockerfile MISSING"
+              echo "Maven build output:"
+              ls -la SmallestSpringApp/target || true
         - name: Dockethub
           id: Dockethub
           build:
