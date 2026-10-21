@@ -27,6 +27,7 @@ pipeline:
               mvn -f SmallestSpringApp/pom.xml test
             intelligence:
               disabled: true
+        
         - name: Dockethub
           id: Dockethub
           build:
@@ -38,4 +39,6 @@ pipeline:
                 - SmallestSpringApp
               caching: true
               context: SmallestSpringApp
-              dockerfile: SmallestSpringApp/Dockerfile
+              dockerfile: Dockerfile
+
+       
