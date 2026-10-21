@@ -1,0 +1,10 @@
+pipeline:
+  stages:
+    - steps:
+        - run:
+            script: |-
+              cd SmallestSpringApp 
+              mvn -B clean package 
+              mvn -B test
+          name: sample_springboot
+          id: sample_springboot
