@@ -27,10 +27,3 @@ pipeline:
               mvn -f SmallestSpringApp/pom.xml test
             intelligence:
               disabled: true
-        - id: coverage
-          name: Upload Coverage
-          run:
-            shell: bash
-            script: hcli cov upload
-            env:
-              CI_ENABLE_HCLI_FOR_TESTS: "true"
