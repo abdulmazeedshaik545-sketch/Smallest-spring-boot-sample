@@ -37,5 +37,5 @@ pipeline:
               tags:
                 - SmallestSpringApp
               caching: true
-              context: SmallestSpringApp
+              context: .
               dockerfile: SmallestSpringApp/Dockerfile
