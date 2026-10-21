@@ -3,6 +3,6 @@ pipeline:
     - steps:
         - run:
             script: |-
-              mvn clean test
+              mvn -f SmallestSpringApp/pom.xml clean test
           name: microtestservice
           id: microtestservice
