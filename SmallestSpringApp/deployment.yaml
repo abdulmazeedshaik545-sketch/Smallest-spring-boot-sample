@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: smallest-spring-app
-          image: YOUR_DOCKERHUB_USERNAME/smallest-spring-app:SmallestSpringApp
+          image: abdulmazeed545/smallest-spring-app:SmallestSpringApp
           ports:
             - containerPort: 8080
 ---
