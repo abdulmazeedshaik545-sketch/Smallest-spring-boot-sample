@@ -27,7 +27,7 @@ pipeline:
               mvn -f SmallestSpringApp/pom.xml test
             intelligence:
               disabled: true
-        
+
         - id: checkDockerfile
           name: Verify Dockerfile
           run:
@@ -52,7 +52,51 @@ pipeline:
               caching: true
               context: .
               dockerfile: SmallestSpringApp/Dockerfile
-
-
-
-       
+    - name: Deploy Kubernetes_bc85
+      id: Deploy_Kubernetes_bc85
+      service:
+        type: kubernetes
+        items:
+          - SmallestSpringApp_Service
+      environment:
+        items:
+          - id: Microservices_Dev
+            all-infra: true
+            deploy-to: <+input>
+      steps:
+        - name: Kubernetes Canary Deploy
+          id: k8sCanaryDeployStep
+          template:
+            uses: k8sCanaryDeployStep
+        - name: Kubernetes Canary Delete
+          id: k8sCanaryDeleteStep
+          template:
+            uses: k8sCanaryDeleteStep
+            with:
+              resources: ${{stage.steps.k8sCanaryDeployStep.output.outputVariables.canaryWorkloads}}
+              is_openshift: ${{stage.steps.k8sCanaryDeployStep.output.outputVariables.isOpenshift}}
+        - name: Kubernetes Rolling Deploy
+          id: k8sRollingDeployStep
+          template:
+            uses: k8sRollingDeployStep
+      rollback:
+        - group:
+            steps:
+              - name: Kubernetes Canary Rollback Delete
+                id: k8sCanaryRollbackDeleteStep
+                template:
+                  uses: k8sCanaryDeleteStep
+                  with:
+                    select_delete_resources: resources
+                    resources: ${{rollback.data.PLUGIN_CANARY_WORKLOADS}}
+                    is_openshift: ${{rollback.data.HARNESS_IS_OPENSHIFT}}
+              - name: Kubernetes Rolling Rollback
+                id: k8sRollingRollbackStep
+                template:
+                  uses: k8sRollingRollbackStep
+          id: k8sCanaryRollback
+          name: Kubernetes Canary Rollback
+      on-failure:
+        errors: all
+        action: stage-rollback
+      runtime: cloud
