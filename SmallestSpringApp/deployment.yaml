@@ -16,6 +16,7 @@ spec:
       containers:
         - name: smallest-spring-app
           image: abdulmazeed545/smallest-spring-app:SmallestSpringApp
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
 ---
