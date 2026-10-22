@@ -19,9 +19,6 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
-          env:
-          - name: JAVA_TOOL_OPTIONS
-            value: "--add-opens=java.base/java.lang=ALL-UNNAMED"
 ---
 apiVersion: v1
 kind: Service
