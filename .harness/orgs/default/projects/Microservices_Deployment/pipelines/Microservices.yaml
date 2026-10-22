@@ -13,12 +13,14 @@ pipeline:
           name: Setup Java
           template:
             uses: setupJava@1.0.0
+
         - id: buildLinux
           name: Build on Linux
           run:
             shell: bash
             script: |-
               mvn -B -f SmallestSpringApp/pom.xml -DskipTests package
+
         - id: testLinux
           name: Test on Linux
           run-test:
@@ -40,8 +42,8 @@ pipeline:
               cat SmallestSpringApp/Dockerfile
               ls -la SmallestSpringApp/target
 
-        - name: Dockethub
-          id: Dockethub
+        - id: Dockethub
+          name: Dockethub
           build:
             uses: buildAndPushToDocker
             with:
@@ -52,6 +54,7 @@ pipeline:
               caching: true
               context: .
               dockerfile: SmallestSpringApp/Dockerfile
+
     - name: Deploy Kubernetes_bc85
       id: Deploy_Kubernetes_bc85
       service:
@@ -61,13 +64,14 @@ pipeline:
       environment:
         items:
           - id: Microservices_Dev
-            all-infra: true
-            deploy-to: Microservices_Dev
+            all-infra: false
+            deploy-to: infrastructure_kubernetes_gcp_8fbd
       steps:
         - name: Kubernetes Canary Deploy
           id: k8sCanaryDeployStep
           template:
             uses: k8sCanaryDeployStep
+
         - name: Kubernetes Canary Delete
           id: k8sCanaryDeleteStep
           template:
@@ -75,10 +79,12 @@ pipeline:
             with:
               resources: ${{stage.steps.k8sCanaryDeployStep.output.outputVariables.canaryWorkloads}}
               is_openshift: ${{stage.steps.k8sCanaryDeployStep.output.outputVariables.isOpenshift}}
+
         - name: Kubernetes Rolling Deploy
           id: k8sRollingDeployStep
           template:
             uses: k8sRollingDeployStep
+
       rollback:
         - group:
             steps:
@@ -90,13 +96,16 @@ pipeline:
                     select_delete_resources: resources
                     resources: ${{rollback.data.PLUGIN_CANARY_WORKLOADS}}
                     is_openshift: ${{rollback.data.HARNESS_IS_OPENSHIFT}}
+
               - name: Kubernetes Rolling Rollback
                 id: k8sRollingRollbackStep
                 template:
                   uses: k8sRollingRollbackStep
           id: k8sCanaryRollback
           name: Kubernetes Canary Rollback
+
       on-failure:
         errors: all
         action: stage-rollback
+
       runtime: cloud
