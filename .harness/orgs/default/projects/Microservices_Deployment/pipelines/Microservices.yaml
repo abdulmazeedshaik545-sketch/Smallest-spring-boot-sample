@@ -62,7 +62,7 @@ pipeline:
         items:
           - id: Microservices_Dev
             all-infra: true
-            deploy-to: <+input>
+            deploy-to: Microservices_Dev
       steps:
         - name: Kubernetes Canary Deploy
           id: k8sCanaryDeployStep
